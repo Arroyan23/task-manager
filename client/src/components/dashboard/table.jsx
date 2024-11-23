@@ -3,10 +3,23 @@ import { motion } from "framer-motion";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CardMhs } from "./card";
+import { useState, useEffect } from "react";
 
-export const Table = () => {
-  // membuat fungsi untuk menambahkan ke dalam database dengan ke unikan di setiap data
-  // karena menggunakan authentication user
+export const Table = ({ liftingForms }) => {
+  // menambahkan fungsi untuk tombol menambahkan form
+  const [liftingForm, setLiftingForm] = useState(false); // Inisialisasi dengan false
+
+  const handleClickLift = () => {
+    setLiftingForm(true);
+  };
+
+  useEffect(() => {
+    liftingForms(liftingForm);
+  }, [liftingForm, liftingForms]);
+
+  // mengambil data di database dengan keunikan profile
+  // sehingga bisa ditaruh di dalam table dengan profile masing2
+
   return (
     <>
       <div className="h-screen w-full flex justify-center items-center">
@@ -21,6 +34,7 @@ export const Table = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 200, damping: 10 }}
+              onClick={() => handleClickLift()}
             >
               <h3>Add New Mhs</h3>
               <FontAwesomeIcon icon="fa-solid fa-plus" />

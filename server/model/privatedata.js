@@ -15,8 +15,8 @@ const detailData = mongoose.model("detailinfo", {
     required: true,
   },
   profile: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "users",
+    type: String,
+    required: true,
   },
 });
 

@@ -7,6 +7,7 @@ require("./database/mongoose");
 const dataUser = require("./model/mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const privData = require("./model/privatedata");
 
 // middleware
 app.use(express.json());
@@ -95,6 +96,30 @@ app.post("/login", async (req, res) => {
     });
   } catch {
     console.log("gagal memvalidasi kepada database");
+  }
+});
+
+// menambah server untuk menambahkan ke dalam database dengan keunikan profile
+app.post("/add/private/data", async (req, res) => {
+  try {
+    // jangan lupa untuk mengirim jsonwebtoken ke backend di front end bagian
+    // headers authorization
+    const token = req.header("Authorization");
+    const decoded = jwt.verify(token, "IndkGyci83bdl");
+    const objectId = decoded.id;
+
+    const { role, fullName, email } = req.body;
+    const newPrivateData = new privData({
+      nama: fullName,
+      email,
+      jobs: role,
+      profile: objectId,
+    });
+
+    // tambahkan ke dalam database
+    await newPrivateData.save();
+  } catch (error) {
+    console.log("gagal untuk menambahkan ke dalam database BACKEND : " + error);
   }
 });
 

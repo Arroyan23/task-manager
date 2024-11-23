@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
+  
   return !!token; // True jika token ada
 };
 
