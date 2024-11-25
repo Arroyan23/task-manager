@@ -1,13 +1,15 @@
 // halaman untuk table dan menampilkan data dari databases mongoose
 import { motion } from "framer-motion";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CardMhs } from "./card";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export const Table = ({ liftingForms }) => {
   // menambahkan fungsi untuk tombol menambahkan form
   const [liftingForm, setLiftingForm] = useState(false); // Inisialisasi dengan false
+  const [details, setDetail] = useState([]);
+  const [objectId, setObjectId] = useState("");
 
   const handleClickLift = () => {
     setLiftingForm(true);
@@ -17,8 +19,32 @@ export const Table = ({ liftingForms }) => {
     liftingForms(liftingForm);
   }, [liftingForm, liftingForms]);
 
-  // mengambil data di database dengan keunikan profile
-  // sehingga bisa ditaruh di dalam table dengan profile masing2
+  // use effect dengan menggunakan axios
+  useEffect(() => {
+    const fetchInfoAPI = async () => {
+      try {
+        // ambil link dengan
+        const responses = await axios.get(
+          "http://localhost:5000/get-priv-data",
+          {
+            headers: {
+              Authorization: localStorage.getItem("token"),
+            },
+          }
+        );
+        setDetail(responses.data);
+        // kasih catch nya dengan penjelasan errornya
+      } catch {
+        console.log("Gagal untuk mendapatkan data dari database FRONT END");
+      }
+    };
+    fetchInfoAPI();
+  }, []);
+
+  // buat fungsi untuk memfilter deleted data
+  const handleDeleteFilter = (value) => {
+    setDetail(details.filter((u) => u._id !== value));
+  };
 
   return (
     <>
@@ -41,7 +67,18 @@ export const Table = ({ liftingForms }) => {
             </motion.div>
           </div>
           {/* membuat kotak untuk setiap data */}
-          <CardMhs />
+          {details.map((e, i) => {
+            return (
+              <>
+                <CardMhs
+                  name={e.nama}
+                  email={e.email}
+                  objectId={e._id}
+                  dataDeleted={() => handleDeleteFilter}
+                />
+              </>
+            );
+          })}
         </div>
       </div>
     </>

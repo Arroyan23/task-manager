@@ -123,6 +123,31 @@ app.post("/add/private/data", async (req, res) => {
   }
 });
 
+// menampilkan ke dalam data dengan keunikan profile
+app.get("/get-priv-data", async (req, res) => {
+  // tangkap id nya dengan menggunakan token
+  const token = req.header("Authorization");
+  const decoded = jwt.verify(token, "IndkGyci83bdl");
+  const getObjectId = decoded.id;
+
+  const findDetailById = await privData.find({ profile: getObjectId });
+  // kirimkan ke api menggunakan res.json
+  res.json(findDetailById);
+});
+
+// fungsi untuk menghapus data berdasarkan object id nya
+app.delete("/delete-id/:id", async (req, res) => {
+  // tangkap idnya berdasarkan yang dikirimkan oleh id yang dikirimkan
+  try {
+    const id = req.params.id;
+    const deleteData = await privData.findByIdAndDelete(id);
+    res.status(200).json({ message: "Berhasil menghapus data di database" });
+    console.log("BERHASIL DI HAPUS BACKEND");
+  } catch {
+    console.log("Gagal untuk melakukan delete dari back end");
+  }
+});
+
 // listener port part
 app.listen(port, () => {
   console.log(`App is listening on http://localhost:${port}`);
