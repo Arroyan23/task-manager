@@ -2,10 +2,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const CardMhs = ({ name, email, objectId, dataDeleted }) => {
   // masukkan ke dalam table untuk menambahkan di bagian front end
   const [data, setData] = useState();
+  const Navigate = useNavigate();
   // membuat fungsi delete dengan jika diketahui unik dari object id tersebut
   const handleDeleteClick = async () => {
     const confirmDelete = confirm(
@@ -17,13 +19,12 @@ export const CardMhs = ({ name, email, objectId, dataDeleted }) => {
         const responses = await axios.delete(
           `http://localhost:5000/delete-id/${objectId}`
         );
-        setData(objectId);
-        dataDeleted(data);
-        console.log("works 100%");
       } catch {
         console.log("gagal untuk menghapus data: FRONT END");
       }
     }
+
+    Navigate("/dashboard");
   };
 
   return (
