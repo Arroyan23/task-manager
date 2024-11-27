@@ -7,6 +7,7 @@ export const SignUpForm = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otpForm, setOtpForm] = useState("");
 
   // menggunakan fungsi untuk memasukkan ke dalam database
   // tambahkan konfigurasi untuk menambahkan ke dalam database dan berhasil
@@ -23,6 +24,21 @@ export const SignUpForm = () => {
       console.log("gagal untuk memasukkan ke dalam database");
     }
   };
+
+  const sendOtpEmail = async () => {
+    try {
+      await axios.post("http://localhost:5000/login-debug-otp", { email });
+      console.log("SUKSES");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    sendOtpEmail();
+  };
+
   return (
     <>
       {/* From Uiverse.io by ahkamboh */}
@@ -85,6 +101,14 @@ export const SignUpForm = () => {
           >
             Submit
           </button>
+          <form action="" onSubmit={handleSubmit}>
+            <button
+              className="outline-none glass shadow-2xl w-full p-3 bg-[#ffffff42] hover:border-[#035ec5] hover:border-solid hover:border-[1px] hover:text-[#035ec5] font-bold"
+              type="submit"
+            >
+              Submit OTP
+            </button>
+          </form>
         </div>
       </div>
     </>

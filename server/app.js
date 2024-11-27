@@ -8,30 +8,13 @@ const dataUser = require("./model/mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const privData = require("./model/privatedata");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 // middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
-// middleware pada token untuk mengambil data dari jwt
-// decode jwt dengan membuat fungsi itu sendiri
-const authenticate = async (req, res, next) => {
-  const token = req.header("Authorization");
-  if (!token) {
-    return res.status(403).json({ message: "Tidak dapat mengenali user" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, "IndkGyci83bdl");
-
-    const userId = decoded.id;
-    req.dataUser = { _id: userId };
-    next();
-  } catch {
-    console.log("terjadi kesalahan pada saat mengambil token");
-  }
-};
 
 // menambahkan fungsi api untuk menambahkan data
 app.post("/add/data/1562", async (req, res) => {
@@ -146,6 +129,41 @@ app.delete("/delete-id/:id", async (req, res) => {
   } catch {
     console.log("Gagal untuk melakukan delete dari back end");
   }
+});
+
+// buat debugging untuk konfirmasi kode otp
+
+app.post("/login-debug-otp", async (req, res) => {
+  // halaman untuk menjalankan debugging email
+
+  const { email } = req.body;
+  // generate kode otp
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  const transporter = nodemailer.createTransport({
+    // konfigurasi akun emailw
+    service: "gmail",
+    auth: {
+      user: "syawqiarroyan@gmail.com",
+      pass: "zgob akxl aapk vvmh",
+    },
+  });
+
+  const mailOption = {
+    from: "syawqiarroyan@gmail.com",
+    to: email,
+    subject: "Kode Verifikasi Login",
+    text: `Kode otp anda adalah : ${otp}`,
+  };
+
+  transporter.sendMail(mailOption, (error, info) => {
+    if (error) {
+      console.log("something when error" + error);
+    } else {
+      console.log("Email Sent : " + info);
+      res.status(200).json(otp);
+    }
+  });
 });
 
 // listener port part
