@@ -161,7 +161,7 @@ app.post("/login-debug-otp", async (req, res) => {
       console.log("something when error" + error);
     } else {
       console.log("Email Sent : " + info);
-      res.status(200).json(otp);
+      res.status(200).json({ otp });
     }
   });
 });

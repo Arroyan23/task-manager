@@ -2,24 +2,32 @@
 import { useState } from "react";
 import axios from "axios";
 
-export const SignUpForm = () => {
+export const SignUpForm = ({ setOtpFormState }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [otpForm, setOtpForm] = useState("");
 
   // menggunakan fungsi untuk memasukkan ke dalam database
   // tambahkan konfigurasi untuk menambahkan ke dalam database dan berhasil
-  const onClickDatabaseUser = async () => {
+  const onClickDatabaseUser = async (event) => {
+    event.preventDefault();
     try {
-      const nama = firstName + " " + lastName;
-      const newData = { nama, email, password };
+      // const nama = firstName + " " + lastName;
+      // const newData = { nama, email, password };
+      // const responses = await axios.post(
+      //   "http://localhost:5000/add/data/1562",
+      //   newData
+      // );
+      // console.log("Berhasil ditambahkan ke dalam database" + responses);
       const responses = await axios.post(
-        "http://localhost:5000/add/data/1562",
-        newData
+        "http://localhost:5000/login-debug-otp",
+        { email }
       );
-      console.log("Berhasil ditambahkan ke dalam database" + responses);
+      // simpan otp ke dalam localstorage
+      localStorage.setItem("otpCode", responses.data.otp);
+      setOtpFormState(true);
+      console.log("Berhasil melakukan set ke dalam lifting stage");
     } catch {
       console.log("gagal untuk memasukkan ke dalam database");
     }
@@ -27,10 +35,20 @@ export const SignUpForm = () => {
 
   const sendOtpEmail = async () => {
     try {
-      await axios.post("http://localhost:5000/login-debug-otp", { email });
-      console.log("SUKSES");
+      const response = await axios.post(
+        "http://localhost:5000/login-debug-otp",
+        {
+          email,
+        }
+      );
+      console.log("SUKSES", response.data);
+      // Tampilkan pesan sukses kepada pengguna
     } catch (error) {
-      console.log(error);
+      console.error(
+        "Error sending OTP:",
+        error.response ? error.response.data : error.message
+      );
+      // Tampilkan pesan kesalahan kepada pengguna
     }
   };
 
@@ -45,6 +63,7 @@ export const SignUpForm = () => {
       <div className="px-7 h-screen grid justify-center items-center">
         <div className="grid gap-6" id="div">
           <div className="w-full flex gap-3">
+            <form></form>
             <input
               className="capitalize shadow-2xl p-3 ex w-full outline-none focus:border-solid focus:border-[1px] border-[#035ec5] placeholder:text-black"
               type="text"
@@ -95,18 +114,12 @@ export const SignUpForm = () => {
               required
             />
           </div>
-          <button
-            className="outline-none glass shadow-2xl w-full p-3 bg-[#ffffff42] hover:border-[#035ec5] hover:border-solid hover:border-[1px] hover:text-[#035ec5] font-bold"
-            onClick={onClickDatabaseUser}
-          >
-            Submit
-          </button>
-          <form action="" onSubmit={handleSubmit}>
+          <form onSubmit={onClickDatabaseUser}>
             <button
               className="outline-none glass shadow-2xl w-full p-3 bg-[#ffffff42] hover:border-[#035ec5] hover:border-solid hover:border-[1px] hover:text-[#035ec5] font-bold"
               type="submit"
             >
-              Submit OTP
+              Submit
             </button>
           </form>
         </div>

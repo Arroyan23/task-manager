@@ -4,7 +4,7 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router/router";
-import MyContext from "./data/globalcontext";
+import { MyProvider } from "./data/globalcontext";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -12,9 +12,9 @@ function App() {
 
   return (
     <>
-      <MyContext.Provider value={{ username, setUserName }}>
+      <MyProvider>
         <RouterProvider router={router} />
-      </MyContext.Provider>
+      </MyProvider>
     </>
   );
 }

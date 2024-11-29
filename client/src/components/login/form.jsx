@@ -1,13 +1,15 @@
 // halaman untuk form login
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
+import MyContext from "../../data/globalcontext";
 
 export const LoginForm = () => {
   // membuat fungsi database untuk login beserta token tokennya
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setError] = useState("");
+  const { user } = useContext(MyContext);
   // konfirmasi dengan konfigurasi database dan menambahkan token
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,10 +22,12 @@ export const LoginForm = () => {
 
       // masukkan ke dalam local storage tokennya
       localStorage.setItem("token", response.data.token);
+      console.log("Setting username to:", email);
 
       // redirect ke halaman utama jika berhasil di jalankan
       window.location.href = "/dashboard";
-    } catch {
+    } catch (error) {
+      console.log(error);
       console.log("terjadi kegagalan dalam konfirmasi ke dalam database");
       // jika terjadi error maka kirimkan error dengan set di se state
       setError(
@@ -33,8 +37,9 @@ export const LoginForm = () => {
 
       console.log(errorMessage);
     }
-  };
 
+    user.setUsername(email);
+  };
 
   return (
     <>

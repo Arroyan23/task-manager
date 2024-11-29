@@ -79,6 +79,11 @@ export default function Otp2() {
           </form>
         </div>
       </div>
+      <div className="flex justify-center">
+        <button className="bg-sky-400 py-2 px-4 rounded-lg mt-4 shadow-xl">
+          Submit
+        </button>
+      </div>
     </section>
   );
 }

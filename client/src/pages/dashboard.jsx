@@ -4,6 +4,7 @@ import { Table } from "../components/dashboard/table";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { FormAdd } from "../components/dashboard/addform";
+import MyContext from "../data/globalcontext";
 
 export const Dashboard = () => {
   // menambahkan fungsi state untuk menambahkan form

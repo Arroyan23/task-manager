@@ -2,14 +2,16 @@
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CardMhs } from "./card";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import MyContext from "../../data/globalcontext";
 
 export const Table = ({ liftingForms }) => {
   // menambahkan fungsi untuk tombol menambahkan form
   const [liftingForm, setLiftingForm] = useState(false); // Inisialisasi dengan false
   const [details, setDetail] = useState([]);
   const [objectId, setObjectId] = useState("");
+  const { user } = useContext(MyContext);
 
   const handleClickLift = () => {
     setLiftingForm(true);
@@ -52,7 +54,7 @@ export const Table = ({ liftingForms }) => {
         <div className="bg-white rounded-lg shadow-xl w-[30rem] h-96 p-3">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-xl font-semibold mb-3">
-              Data Mahasiswa (Nama Usher)
+              Data Mahasiswa {user.username}
             </h1>
             {/* button untuk add new item */}
             <motion.div
