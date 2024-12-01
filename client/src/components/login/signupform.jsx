@@ -2,7 +2,12 @@
 import { useState } from "react";
 import axios from "axios";
 
-export const SignUpForm = ({ setOtpFormState }) => {
+export const SignUpForm = ({
+  setOtpFormState,
+  fullName,
+  emailState,
+  passwordState,
+}) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -13,7 +18,7 @@ export const SignUpForm = ({ setOtpFormState }) => {
   const onClickDatabaseUser = async (event) => {
     event.preventDefault();
     try {
-      // const nama = firstName + " " + lastName;
+      const nama = firstName + " " + lastName;
       // const newData = { nama, email, password };
       // const responses = await axios.post(
       //   "http://localhost:5000/add/data/1562",
@@ -24,6 +29,9 @@ export const SignUpForm = ({ setOtpFormState }) => {
         "http://localhost:5000/login-debug-otp",
         { email }
       );
+      fullName(nama);
+      emailState(email);
+      passwordState(password);
       // simpan otp ke dalam localstorage
       localStorage.setItem("otpCode", responses.data.otp);
       setOtpFormState(true);

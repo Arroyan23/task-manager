@@ -1,37 +1,34 @@
 import React, { useRef, useState } from "react";
 
-export default function Otp2() {
+export default function Otp2({ sendOtpCode }) {
   const [otp, setOtp] = useState(Array(6).fill("")); // Array with 6 empty strings
   const inputRefs = useRef([]); // Array of refs for each input field
+  const [error, setError] = useState(false);
 
   const handleKeyDown = (e) => {
-    if (
-      !/^[0-9]{1}$/.test(e.key) &&
-      e.key !== "Backspace" &&
-      e.key !== "Delete" &&
-      e.key !== "Tab" &&
-      !e.metaKey
-    ) {
-      e.preventDefault();
-    }
-
-    if (e.key === "Delete" || e.key === "Backspace") {
-      const index = inputRefs.current.indexOf(e.target);
+    const index = inputRefs.current.indexOf(e.target);
+    if (e.key === "Backspace" || e.key === "Delete") {
+      setOtp((prevOtp) => [
+        ...prevOtp.slice(0, index),
+        "",
+        ...prevOtp.slice(index + 1),
+      ]);
       if (index > 0) {
-        setOtp((prevOtp) => [
-          ...prevOtp.slice(0, index - 1),
-          "",
-          ...prevOtp.slice(index),
-        ]);
         inputRefs.current[index - 1].focus();
       }
+      e.preventDefault();
+    } else if (
+      !/^[0-9]{1}$/.test(e.key) &&
+      !["Tab", "ArrowLeft", "ArrowRight"].includes(e.key)
+    ) {
+      e.preventDefault();
     }
   };
 
   const handleInput = (e) => {
     const { target } = e;
     const index = inputRefs.current.indexOf(target);
-    if (target.value) {
+    if (/^[0-9]{1}$/.test(target.value)) {
       setOtp((prevOtp) => [
         ...prevOtp.slice(0, index),
         target.value,
@@ -49,12 +46,24 @@ export default function Otp2() {
 
   const handlePaste = (e) => {
     e.preventDefault();
-    const text = e.clipboardData.getData("text");
-    if (!new RegExp(`^[0-9]{${otp.length}}$`).test(text)) {
-      return;
+    const text = e.clipboardData.getData("text").slice(0, otp.length);
+    if (/^[0-9]+$/.test(text)) {
+      const digits = text.split("");
+      setOtp((prevOtp) =>
+        digits.map((digit, index) => digits[index] || prevOtp[index])
+      );
     }
-    const digits = text.split("");
-    setOtp(digits);
+  };
+
+  const handleCliCk = () => {
+    const localstorageConfirm = localStorage.getItem("otpCode");
+    const confirmOtpInput = otp.join("");
+    if (confirmOtpInput === localstorageConfirm) {
+      setError(false);
+      sendOtpCode(confirmOtpInput);
+    } else {
+      setError(true);
+    }
   };
 
   return (
@@ -80,9 +89,22 @@ export default function Otp2() {
         </div>
       </div>
       <div className="flex justify-center">
-        <button className="bg-sky-400 py-2 px-4 rounded-lg mt-4 shadow-xl">
-          Submit
-        </button>
+        <div className="">
+          {error && (
+            <p className="text-red-500 mt-2">
+              Kode OTP yang anda masukkan{" "}
+              <span className="font-bold">SALAH</span>
+            </p>
+          )}
+          <div className="flex justify-center">
+            <button
+              className="bg-sky-400 py-2 px-4 rounded-lg mt-2 shadow-xl"
+              onClick={handleCliCk}
+            >
+              Submit
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -19,7 +19,7 @@ app.use(cors());
 // menambahkan fungsi api untuk menambahkan data
 app.post("/add/data/1562", async (req, res) => {
   try {
-    const { nama, email, password } = req.body;
+    const { fullName, email, password } = req.body;
     // cek dulu apakah email sudah terdaftar di dalam database
     const existingEmail = await dataUser.findOne({ email });
     if (existingEmail) {
@@ -29,13 +29,18 @@ app.post("/add/data/1562", async (req, res) => {
     // ubah passwordnya dengan bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
     const newDataMhs = new dataUser({
-      fullName: nama,
+      fullName,
       email,
       password: hashedPassword,
     });
-    newDataMhs.save();
-  } catch {
-    console.log("Terjadi Kesalahan Dalam memasukkan kedalam database");
+    await newDataMhs.save();
+    res.status(201).json({
+      message: "Data berhasil di tambahkan dan lanjut ke bagian selanjunya",
+    });
+  } catch (error) {
+    console.log(
+      "Terjadi Kesalahan Dalam memasukkan kedalam database : " + error
+    );
   }
 });
 
